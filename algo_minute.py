@@ -18,18 +18,18 @@ from time import sleep
 
 data_client = StockHistoricalDataClient(API_KEY, SECRET_KEY)
 
-close_history = [] #Used to calculate the moving average
+close_history = [] 
 plot_minute_moving_average = []
 plot_minute_closing = []
 
-def movingMinuteAverage(minute_interval, ticker, pos_held):
+def moving_minute_average(minute_interval: int, ticker: str, pos_held: bool):
     """
     Gathers [minute_interval] moving average of a ticker and buys a share if the closing price of that interval crosses above the moving average and sells if closing price crosses below moving average
 
     Args:
-        minute_interval: (int)
-        ticker: (str) Symbol of Stock to be watched
-        pos_held: (bool) value for if the position is already held
+        minute_interval (int): Span of each moving average
+        ticker (str): Symbol of Stock to be watched
+        pos_held (bool): value for if the position is already held
     """
 
 
@@ -75,11 +75,20 @@ def movingMinuteAverage(minute_interval, ticker, pos_held):
     plot_minute_moving_average.append(moving_average)
     return pos_held
 
-def run_minute_average(time_to_run, ticker):
+def run_ticker(time_to_run: int, ticker: str, minute_average: int):
+    """
+    Runs the moving minute average for x minutes on the ticker specified
+
+    Args:
+        time_to_run (int): Value for how many minutes to run for
+        ticker (str): Symbol of Stock to watch
+        minute_average (int): How long each moving average should span
+    """
+
     x1 = []
     pos_held = False
     while (time_to_run > 0):
-        pos_held = movingMinuteAverage(5,ticker,pos_held)
+        pos_held = moving_minute_average(minute_average,ticker,pos_held)
         #Keep program running until positions are sold
         if (pos_held and time_to_run == 1):
             print("Keep running until positions are sold")
@@ -102,7 +111,16 @@ def run_minute_average(time_to_run, ticker):
 plot_minute_closing_multiple = []
 plot_minute_moving_average_multiple = []
 #Run with multiple tickers
-def multipleMovingMinuteAverage(minute_interval, tickers, pos_held):
+def multiple_moving_averages(minute_interval: int, tickers: list[str], pos_held):
+    """
+    Gathers [minute_interval] moving average of multiple tickers and buys a share if the closing price of that interval crosses above the moving average and sells if closing price crosses below moving average
+
+    Args:
+        minute_interval (int): Span of moving minute average
+        tickers: (List[str]): List of symbols of stocks to be watched
+        pos_held (bool): True/False for if the position is already held
+    """
+
     #Setting up bar requests
     stock_bars_request = StockBarsRequest(
                                 symbol_or_symbols= tickers, 
@@ -149,9 +167,14 @@ def multipleMovingMinuteAverage(minute_interval, tickers, pos_held):
         plot_minute_moving_average_multiple[i].append(moving_average)
     return pos_held
 
-def run_minute_average_multiple(time_to_run, tickers, minute_interval):
+def run_multiple_tickers(time_to_run: int, tickers: list[str], minute_interval: int):
     """
-    dlfjadf
+    Runs the moving minute average for x minutes on the ticker specified
+
+    Args:
+        time_to_run (int): Value for how many minutes to run for
+        tickers (List[str]): List of symbols of stocks to watch
+        minute_average (int): How long each moving average should span
     """
 
     x1 = []
@@ -163,7 +186,7 @@ def run_minute_average_multiple(time_to_run, tickers, minute_interval):
         plot_minute_moving_average_multiple.append([])
 
     while (time_to_run > 0):
-        pos_held = multipleMovingMinuteAverage(minute_interval,tickers,pos_held)
+        pos_held = multiple_moving_averages(minute_interval,tickers,pos_held)
         
         for i in range(0,len(pos_held)):
             print("")

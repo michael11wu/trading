@@ -5,7 +5,7 @@ Can use on one or multiple tickers
 """
 
 from alpaca.data.historical import StockHistoricalDataClient
-from alpaca.data.requests import StockBarsRequest, StockQuotesRequest, StockTradesRequest
+from alpaca.data.requests import StockBarsRequest
 from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from datetime import datetime, timedelta
 
@@ -30,7 +30,7 @@ def moving_minute_average(moving_average: int, ticker: str, pos_held: bool, inte
         moving_average (int): Span of each moving average
         ticker (str): Symbol of Stock to be watched
         pos_held (bool): value for if the position is already held
-        interval (int): How long to wait for getting moving average
+        interval (int): How long to wait for getting moving average. Keep at (1) for every minute. It will run every x minutes and the moving average will span x * moving_average minutes
     """
 
 
@@ -52,7 +52,7 @@ def moving_minute_average(moving_average: int, ticker: str, pos_held: bool, inte
 
     current_moving_average = numpy.mean(close_history)
 
-    print("5 minute moving average: " + str(current_moving_average))
+    print(str(moving_average * interval) + " minute moving average: " + str(current_moving_average))
     print("Closing price of Current Minute: " + str(close_history[-1]))
 
     #Need at least two minutes of data
@@ -84,7 +84,7 @@ def run_ticker(time_to_run: int, ticker: str, moving_average: int, interval: int
         time_to_run (int): Value for how many minutes to run for
         ticker (str): Symbol of Stock to watch
         moving_average (int): How long each moving average should span
-        interval (int):
+        interval (int): How long to wait for getting moving average. Keep at (1) for every minute. It will run every x minutes and the moving average will span x * moving_average minutes
     """
 
     x1 = []
@@ -121,7 +121,7 @@ def multiple_moving_averages(moving_average: int, tickers: list[str], pos_held: 
         moving_average (int): Span of moving minute average
         tickers: (List[str]): List of symbols of stocks to be watched
         pos_held (bool): True/False for if the position is already held
-        interval (int): How long between calculating each moving average 
+        interval (int): How long to wait for getting moving average. Keep at (1) for every minute. It will run every x minutes and the moving average will span x * moving_average minutes
     """
 
     #Setting up bar requests
@@ -146,8 +146,8 @@ def multiple_moving_averages(moving_average: int, tickers: list[str], pos_held: 
 
         print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print(ticker + " held: " + str(pos_held[i]))
-        print("5 minute moving average: " + str(current_moving_average))
-        print("Closing price of Current Minute: " + str(closing_history_multiple[-1]))
+        print(str(moving_average * interval) + " minute moving average: " + str(current_moving_average))
+        print("Closing price of Current Minute Span: " + str(closing_history_multiple[-1]))
 
         #Need at least two minutes of data
         if (len(plot_minute_closing_multiple[i]) > 0):
@@ -178,7 +178,7 @@ def run_multiple_tickers(time_to_run: int, tickers: list[str], moving_average: i
         time_to_run (int): Value for how many minutes to run for
         tickers (List[str]): List of symbols of stocks to watch
         moving_average (int): How long each moving average should span
-        interval (int): How many minutes to wait before calculating the moving average
+        interval (int): How long to wait for getting moving average. Keep at (1) for every minute. It will run every x minutes and the moving average will span x * moving_average minutes
     """
 
     x1 = []
